@@ -77,48 +77,48 @@ class _Blob extends StatelessWidget {
 }
 
 class BrandMark extends StatelessWidget {
-  const BrandMark({super.key, this.compact = false});
+  const BrandMark({super.key, this.compact = false, this.logoOnly = false});
 
   final bool compact;
+  final bool logoOnly;
 
   @override
   Widget build(BuildContext context) {
-    final size = compact ? 42.0 : 72.0;
-    return Row(
+    final size = compact ? 48.0 : (logoOnly ? 160.0 : 88.0);
+    final logo = ClipRRect(
+      borderRadius: BorderRadius.circular(compact ? 12 : 20),
+      child: Image.asset(
+        'assets/logo.png',
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+      ),
+    );
+
+    if (logoOnly || compact) {
+      return logo;
+    }
+
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(compact ? 14 : 22),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF3B82F6), Color(0xFF1E3A8A)],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.teal.withValues(alpha: 0.35),
-                blurRadius: 22,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Icon(
-            Icons.shield_moon_rounded,
-            color: Colors.white,
-            size: compact ? 22 : 36,
-          ),
-        ),
-        SizedBox(width: compact ? 10 : 14),
+        logo,
+        const SizedBox(height: 14),
         Text(
-          'ARSAVE',
+          'arsave',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontSize: compact ? 22 : 34,
+                fontSize: 28,
                 fontWeight: FontWeight.w800,
                 color: AppColors.ink,
-                letterSpacing: 1.4,
+                letterSpacing: 0.6,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Sauvegarde et restauration sécurisées',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.slate,
               ),
         ),
       ],

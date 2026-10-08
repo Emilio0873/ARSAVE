@@ -71,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: const Icon(Icons.arrow_back_rounded),
                         ),
                       ),
-                      const BrandMark(compact: true),
+                      const BrandMark(),
                       const SizedBox(height: 18),
                       Text(
                         'Créer votre coffre',

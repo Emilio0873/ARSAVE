@@ -1,24 +1,17 @@
-# ARSAVE
+# arsave
 
-Application Android de sauvegarde, restauration et synchronisation sécurisées des fichiers.
+Application de sauvegarde et de restauration sécurisées de fichiers.
 
-Stack : **Flutter** → **API REST PHP** → **MySQL** + stockage de blobs chiffrés.
-
-## Démarrage rapide
-
-Voir [docs/SETUP.md](docs/SETUP.md).
-
-## Structure
+## Dossiers
 
 | Dossier | Contenu |
 |---------|---------|
-| `database/` | Schéma et seed MySQL |
-| `backend/` | API REST PHP |
-| `mobile/` | Application Flutter |
-| `docs/` | Documentation technique |
+| `database/` | Base de données |
+| `backend/` | Serveur |
+| `mobile/` | Application mobile |
+| `docs/` | Documentation |
 
-## Sécurité
+## Démarrage
 
-- Chiffrement AES-256-GCM **avant** transmission
-- Clé maître dérivée du mot de passe (PBKDF2), jamais exposée à l’API
-- Sessions Bearer hashées, requêtes préparées, ownership côté serveur
+Voir [docs/SETUP.md](docs/SETUP.md) pour l’installation locale  
+et [docs/DEPLOY_RAILWAY.md](docs/DEPLOY_RAILWAY.md) pour l’hébergement.

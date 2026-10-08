@@ -35,8 +35,7 @@ final class App
         $adminCtrl = new AdminController($this->files, $this->auth, $this->db, $this->config);
 
         $this->router->get('/', fn () => Response::json([
-            'name' => 'ARSAVE API',
-            'version' => '1.0.0',
+            'name' => 'arsave',
             'status' => 'ok',
         ]), false);
 

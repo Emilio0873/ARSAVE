@@ -83,12 +83,7 @@ class _LoginScreenState extends State<LoginScreen>
                         children: [
                           const SizedBox(height: 28),
                           const BrandMark(),
-                          const SizedBox(height: 14),
-                          Text(
-                            'Vos fichiers, chiffrés avant même de quitter votre appareil.',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 28),
                           SurfacePanel(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,

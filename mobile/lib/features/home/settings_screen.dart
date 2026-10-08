@@ -118,16 +118,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(),
                   _InfoRow(
                     icon: Icons.lock_rounded,
-                    title: 'Chiffrement local',
+                    title: 'Protection sur l’appareil',
                     body:
-                        'AES-256-GCM avant envoi. La clé maître ne quitte jamais cet appareil.',
+                        'Vos fichiers sont protégés sur votre téléphone avant l’envoi.',
                   ),
                   const SizedBox(height: 12),
                   _InfoRow(
                     icon: Icons.visibility_off_rounded,
-                    title: 'Serveur aveugle',
+                    title: 'Confidentialité',
                     body:
-                        'Le serveur stocke uniquement des blobs chiffrés. Il ne peut pas lire vos fichiers.',
+                        'Personne d’autre ne peut ouvrir le contenu de vos fichiers sauvegardés.',
                   ),
                 ],
               ),

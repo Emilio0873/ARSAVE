@@ -3,15 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ARSAVE — Télécharger</title>
+  <title>arsave — Télécharger</title>
   <style>
     :root {
-      --bg: #050914;
-      --panel: #121c33;
       --ink: #e8eef8;
       --muted: #9aa8c7;
       --accent: #3b82f6;
-      --accent2: #1e3a8a;
+      --green: #a3e635;
     }
     * { box-sizing: border-box; }
     body {
@@ -21,112 +19,80 @@
       color: var(--ink);
       background:
         radial-gradient(circle at 20% 20%, rgba(59,130,246,.25), transparent 40%),
-        radial-gradient(circle at 80% 0%, rgba(30,58,138,.35), transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(163,230,53,.12), transparent 35%),
         linear-gradient(160deg, #050914, #0b1224 50%, #0e1a36);
     }
     main {
-      max-width: 720px;
+      max-width: 640px;
       margin: 0 auto;
-      padding: 48px 20px 64px;
-    }
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 28px;
+      padding: 40px 20px 64px;
+      text-align: center;
     }
     .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      width: min(280px, 80vw);
+      height: auto;
+      border-radius: 28px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
     }
     h1 {
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      margin: 0 0 12px;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      margin: 28px 0 10px;
       letter-spacing: -0.03em;
     }
-    p { color: var(--muted); line-height: 1.55; }
+    h1 span.ar { color: var(--green); }
+    p { color: var(--muted); line-height: 1.55; margin: 0 auto; max-width: 34rem; }
     .card {
       margin-top: 28px;
-      background: rgba(18, 28, 51, 0.9);
+      background: rgba(18, 28, 51, 0.92);
       border: 1px solid #243352;
       border-radius: 20px;
       padding: 24px;
+      text-align: left;
     }
     .actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       margin-top: 20px;
+      justify-content: center;
     }
     a.btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
       text-decoration: none;
       border-radius: 14px;
-      padding: 14px 18px;
+      padding: 14px 20px;
       font-weight: 700;
-    }
-    a.primary {
       background: var(--accent);
       color: #fff;
     }
-    a.secondary {
-      border: 1px solid #243352;
-      color: var(--ink);
-      background: transparent;
-    }
     .note {
-      margin-top: 18px;
+      margin-top: 16px;
       font-size: 0.92rem;
-    }
-    code {
-      background: #0b1224;
-      padding: 2px 6px;
-      border-radius: 6px;
-      color: #93c5fd;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <main>
-    <div class="brand">
-      <div class="logo" aria-hidden="true"></div>
-      <strong>ARSAVE</strong>
-    </div>
-    <h1>Coffre sécurisé pour vos fichiers</h1>
-    <p>
-      Sauvegarde chiffrée (AES-256-GCM) avant l’envoi. La clé maître reste sur votre appareil.
-      Téléchargez l’application Android, puis connectez-vous à l’API hébergée.
-    </p>
+    <img class="logo" src="./logo.png" alt="arsave" />
+    <h1><span class="ar">ar</span>save</h1>
+    <p>Sauvegarde et restauration sécurisées de vos fichiers.</p>
     <section class="card">
-      <h2 style="margin-top:0">Télécharger l’application</h2>
-      <p>Installez l’APK Android, puis connectez-vous avec votre compte.</p>
+      <h2 style="margin-top:0; text-align:center">Télécharger l’application</h2>
+      <p style="text-align:center">Installez l’application sur Android, puis connectez-vous avec votre compte.</p>
       <div class="actions">
-        <a class="btn primary" id="apkLink" href="./arsave.apk" download>Télécharger ARSAVE (Android)</a>
-        <a class="btn secondary" href="/">État de l’API</a>
+        <a class="btn" id="apkLink" href="./arsave.apk" download>Télécharger pour Android</a>
       </div>
-      <p class="note">
-        Compte démo admin : <code>admin@arsave.local</code> /
-        <code>Admin@12345</code> (à changer après première connexion).
-      </p>
-      <p class="note" id="apkHint">
-        Si le téléchargement échoue, l’APK n’est pas encore publié dans
-        <code>/download/arsave.apk</code>.
-      </p>
+      <p class="note" id="apkHint">Le fichier d’installation sera disponible ici dès sa publication.</p>
     </section>
   </main>
   <script>
     fetch("./arsave.apk", { method: "HEAD" }).then(function (r) {
-      if (!r.ok) {
+      if (r.ok) {
         document.getElementById("apkHint").textContent =
-          "APK pas encore disponible. Utilisez le build Flutter local en attendant, ou rechargez après publication.";
-      } else {
-        document.getElementById("apkHint").textContent =
-          "APK prêt. Sur Android, autorisez l’installation depuis des sources inconnues si demandé.";
+          "Téléchargement prêt. Sur Android, autorisez l’installation si demandé.";
       }
     }).catch(function () {});
   </script>
