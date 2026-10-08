@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ARSAVE — Télécharger</title>
+  <style>
+    :root {
+      --bg: #050914;
+      --panel: #121c33;
+      --ink: #e8eef8;
+      --muted: #9aa8c7;
+      --accent: #3b82f6;
+      --accent2: #1e3a8a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(59,130,246,.25), transparent 40%),
+        radial-gradient(circle at 80% 0%, rgba(30,58,138,.35), transparent 35%),
+        linear-gradient(160deg, #050914, #0b1224 50%, #0e1a36);
+    }
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 20px 64px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin: 0 0 12px;
+      letter-spacing: -0.03em;
+    }
+    p { color: var(--muted); line-height: 1.55; }
+    .card {
+      margin-top: 28px;
+      background: rgba(18, 28, 51, 0.9);
+      border: 1px solid #243352;
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-weight: 700;
+    }
+    a.primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    a.secondary {
+      border: 1px solid #243352;
+      color: var(--ink);
+      background: transparent;
+    }
+    .note {
+      margin-top: 18px;
+      font-size: 0.92rem;
+    }
+    code {
+      background: #0b1224;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #93c5fd;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <strong>ARSAVE</strong>
+    </div>
+    <h1>Coffre sécurisé pour vos fichiers</h1>
+    <p>
+      Sauvegarde chiffrée (AES-256-GCM) avant l’envoi. La clé maître reste sur votre appareil.
+      Téléchargez l’application Android, puis connectez-vous à l’API hébergée.
+    </p>
+    <section class="card">
+      <h2 style="margin-top:0">Télécharger l’application</h2>
+      <p>Installez l’APK Android, puis connectez-vous avec votre compte.</p>
+      <div class="actions">
+        <a class="btn primary" id="apkLink" href="./arsave.apk" download>Télécharger ARSAVE (Android)</a>
+        <a class="btn secondary" href="/">État de l’API</a>
+      </div>
+      <p class="note">
+        Compte démo admin : <code>admin@arsave.local</code> /
+        <code>Admin@12345</code> (à changer après première connexion).
+      </p>
+      <p class="note" id="apkHint">
+        Si le téléchargement échoue, l’APK n’est pas encore publié dans
+        <code>/download/arsave.apk</code>.
+      </p>
+    </section>
+  </main>
+  <script>
+    fetch("./arsave.apk", { method: "HEAD" }).then(function (r) {
+      if (!r.ok) {
+        document.getElementById("apkHint").textContent =
+          "APK pas encore disponible. Utilisez le build Flutter local en attendant, ou rechargez après publication.";
+      } else {
+        document.getElementById("apkHint").textContent =
+          "APK prêt. Sur Android, autorisez l’installation depuis des sources inconnues si demandé.";
+      }
+    }).catch(function () {});
+  </script>
+</body>
+</html>

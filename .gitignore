@@ -1,0 +1,29 @@
+# Flutter / IDE
+mobile/.dart_tool/
+mobile/.flutter-plugins-dependencies
+mobile/.flutter-plugins
+mobile/build/
+mobile/.idea/
+mobile/.pub-cache/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Storage blobs
+backend/storage/encrypted/*
+!backend/storage/encrypted/.gitignore
+
+# Secrets / local
+backend/config/config.local.php
+.env
+.env.*
+
+# Generated memoir binaries (keep generator)
+docs/memoire/*.docx
+docs/__pycache__/
+docs/_count_pages.py
+
+# Large APK optional — commit intentionally when publishing
+# backend/public/download/arsave.apk
