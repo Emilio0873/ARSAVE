@@ -53,12 +53,10 @@ class _TrashScreenState extends State<TrashScreen> {
 
   Future<void> _restoreContent(FileModel file) async {
     try {
-      final path =
+      final message =
           await context.read<BackupService>().restoreFile(fileId: file.id);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(path)),
-      );
+      showAppSuccess(context, message);
     } catch (e) {
       if (!mounted) return;
       showAppError(context, e);

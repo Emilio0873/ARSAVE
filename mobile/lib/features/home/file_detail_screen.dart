@@ -50,14 +50,12 @@ class _FileDetailScreenState extends State<FileDetailScreen> {
   Future<void> _restore([int? version]) async {
     setState(() => _busy = true);
     try {
-      final path = await context.read<BackupService>().restoreFile(
+      final message = await context.read<BackupService>().restoreFile(
             fileId: widget.file.id,
             version: version,
           );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(path)),
-      );
+      showAppSuccess(context, message);
     } catch (e) {
       if (!mounted) return;
       showAppError(context, e);

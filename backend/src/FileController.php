@@ -87,6 +87,16 @@ final class FileController
 
         $this->operations->log((int) $user['id'], 'download', 'success', 'Téléchargement version ' . $v['version_number'], $fileId);
 
+        $meta = [
+            'logical_name' => $f['logical_name'],
+            'mime' => $f['mime'],
+            'version' => (int) $v['version_number'],
+            'checksum_sha256' => $v['checksum_sha256'],
+            'nonce_b64' => $v['nonce_b64'],
+            'wrapped_key_b64' => $v['wrapped_key_b64'],
+            'wrap_nonce_b64' => $v['wrap_nonce_b64'],
+        ];
+
         header('Content-Type: application/octet-stream');
         header('Content-Length: ' . (string) filesize($resolved['absolute_path']));
         header('X-Arsave-Logical-Name: ' . rawurlencode($f['logical_name']));
@@ -96,6 +106,7 @@ final class FileController
         header('X-Arsave-Nonce: ' . $v['nonce_b64']);
         header('X-Arsave-Wrapped-Key: ' . $v['wrapped_key_b64']);
         header('X-Arsave-Wrap-Nonce: ' . $v['wrap_nonce_b64']);
+        header('X-Arsave-Meta: ' . rtrim(strtr(base64_encode(json_encode($meta, JSON_UNESCAPED_UNICODE)), '+/', '-_'), '='));
         header('Content-Disposition: attachment; filename="encrypted.bin"');
         readfile($resolved['absolute_path']);
     }

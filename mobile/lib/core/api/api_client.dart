@@ -186,23 +186,86 @@ class ApiClient {
         options: Options(responseType: ResponseType.bytes),
       );
       final headers = response.headers;
-      String header(String name) => headers.value(name) ?? '';
+      String header(String name) {
+        final direct = headers.value(name);
+        if (direct != null && direct.isNotEmpty) return direct;
+        // Certains proxies renvoient une casse différente
+        for (final entry in headers.map.entries) {
+          if (entry.key.toLowerCase() == name.toLowerCase() &&
+              entry.value.isNotEmpty) {
+            return entry.value.first;
+          }
+        }
+        return '';
+      }
+
+      var logicalName = header('x-arsave-logical-name');
+      var mime = header('x-arsave-mime');
+      var versionNo = int.tryParse(header('x-arsave-version')) ?? 0;
+      var checksum = header('x-arsave-checksum');
+      var nonce = header('x-arsave-nonce');
+      var wrappedKey = header('x-arsave-wrapped-key');
+      var wrapNonce = header('x-arsave-wrap-nonce');
+
+      // Si les en-têtes crypto manquent, on les récupère via les versions
+      if (checksum.isEmpty ||
+          nonce.isEmpty ||
+          wrappedKey.isEmpty ||
+          wrapNonce.isEmpty) {
+        final versions = await listVersions(fileId);
+        if (versions.isEmpty) {
+          throw ApiException('Aucune version disponible pour la restauration.');
+        }
+        final FileVersionModel chosen;
+        if (version != null) {
+          chosen = versions.firstWhere(
+            (v) => v.versionNumber == version,
+            orElse: () => versions.first,
+          );
+        } else {
+          chosen = versions.first;
+        }
+        checksum = chosen.checksumSha256;
+        nonce = chosen.nonceB64;
+        wrappedKey = chosen.wrappedKeyB64;
+        wrapNonce = chosen.wrapNonceB64;
+        versionNo = chosen.versionNumber;
+      }
+
+      if (logicalName.isEmpty || mime.isEmpty) {
+        final detail = await _getJson('/files/$fileId');
+        final file = detail['file'] as Map<String, dynamic>? ?? {};
+        if (logicalName.isEmpty) {
+          logicalName = (file['logical_name'] as String?) ?? 'restored.bin';
+        }
+        if (mime.isEmpty) {
+          mime = (file['mime'] as String?) ?? 'application/octet-stream';
+        }
+      }
+
+      if (checksum.isEmpty ||
+          nonce.isEmpty ||
+          wrappedKey.isEmpty ||
+          wrapNonce.isEmpty) {
+        throw ApiException(
+          'Impossible de restaurer : données de protection manquantes.',
+        );
+      }
+
+      final bytes = Uint8List.fromList(response.data ?? const []);
+      if (bytes.isEmpty) {
+        throw ApiException('Fichier vide ou introuvable sur le serveur.');
+      }
 
       return DownloadResult(
-        bytes: Uint8List.fromList(response.data ?? const []),
-        logicalName: Uri.decodeComponent(
-          header('x-arsave-logical-name').isEmpty
-              ? 'restored.bin'
-              : header('x-arsave-logical-name'),
-        ),
-        mime: header('x-arsave-mime').isEmpty
-            ? 'application/octet-stream'
-            : header('x-arsave-mime'),
-        version: int.tryParse(header('x-arsave-version')) ?? 0,
-        checksumSha256: header('x-arsave-checksum'),
-        nonceB64: header('x-arsave-nonce'),
-        wrappedKeyB64: header('x-arsave-wrapped-key'),
-        wrapNonceB64: header('x-arsave-wrap-nonce'),
+        bytes: bytes,
+        logicalName: Uri.decodeComponent(logicalName),
+        mime: mime,
+        version: versionNo,
+        checksumSha256: checksum,
+        nonceB64: nonce,
+        wrappedKeyB64: wrappedKey,
+        wrapNonceB64: wrapNonce,
       );
     } on DioException catch (e) {
       throw _mapDio(e);
