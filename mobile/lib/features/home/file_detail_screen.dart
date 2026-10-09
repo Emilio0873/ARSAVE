@@ -55,7 +55,25 @@ class _FileDetailScreenState extends State<FileDetailScreen> {
             version: version,
           );
       if (!mounted) return;
-      showAppSuccess(context, message);
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('Fichier téléchargé'),
+          content: Text(
+            '$message\n\n'
+            'Où le trouver : application Fichiers → Téléchargements '
+            '(ou le dossier que vous avez choisi).\n'
+            'Dossier rapide : Téléchargements → arsave',
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
       showAppError(context, e);

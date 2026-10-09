@@ -56,7 +56,24 @@ class _TrashScreenState extends State<TrashScreen> {
       final message =
           await context.read<BackupService>().restoreFile(fileId: file.id);
       if (!mounted) return;
-      showAppSuccess(context, message);
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('Fichier téléchargé'),
+          content: Text(
+            '$message\n\n'
+            'Où le trouver : Fichiers → Téléchargements '
+            '(ou Téléchargements → arsave).',
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
       showAppError(context, e);

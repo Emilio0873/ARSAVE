@@ -13,37 +13,57 @@ Future<String> saveRestoredFile({
   final safeName = p.basename(fileName).replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
   final ext = p.extension(safeName).replaceFirst('.', '');
   final baseName = ext.isEmpty
-      ? safeName
+      ? (safeName.isEmpty ? 'arsave_fichier' : safeName)
       : p.basenameWithoutExtension(safeName);
+  final extension = ext.isEmpty ? 'bin' : ext;
+  final mimeType = _mimeFrom(mime, extension);
 
+  // 1) Dialogue système Android : l'utilisateur voit où enregistrer
+  //    (choisir "Téléchargements" / Download)
   try {
-    // Enregistre dans le dossier Téléchargements du téléphone
-    final saved = await FileSaver.instance.saveFile(
-      name: baseName.isEmpty ? 'arsave_fichier' : baseName,
+    final path = await FileSaver.instance.saveAs(
+      name: baseName,
       bytes: bytes,
-      fileExtension: ext.isEmpty ? 'bin' : ext,
-      mimeType: _mimeFrom(mime, ext),
+      fileExtension: extension,
+      mimeType: mimeType,
     );
-    if (saved.isNotEmpty) {
-      return 'Téléchargé dans le téléphone : $safeName';
+    if (path != null && path.isNotEmpty) {
+      return 'Fichier enregistré sur le téléphone.\nEmplacement : $path';
     }
   } catch (_) {
-    // Repli ci-dessous
+    // continue vers les replis
   }
 
-  // Repli : dossier Download public si accessible
-  final downloadDir = await _downloadDirectory();
-  if (downloadDir != null) {
-    final out = File(p.join(downloadDir.path, safeName));
+  // 2) Enregistrement auto dans Téléchargements/arsave
+  final downloadRoot = await _publicDownloadDir();
+  if (downloadRoot != null) {
+    final arsaveDir = Directory(p.join(downloadRoot.path, 'arsave'));
+    if (!await arsaveDir.exists()) {
+      await arsaveDir.create(recursive: true);
+    }
+    final out = File(p.join(arsaveDir.path, safeName));
     await out.writeAsBytes(bytes, flush: true);
-    return 'Téléchargé dans le téléphone : $safeName';
+    return 'Fichier enregistré dans Téléchargements → arsave → $safeName';
   }
+
+  // 3) Dernier repli
+  try {
+    final saved = await FileSaver.instance.saveFile(
+      name: baseName,
+      bytes: bytes,
+      fileExtension: extension,
+      mimeType: mimeType,
+    );
+    if (saved.isNotEmpty) {
+      return 'Fichier téléchargé : $safeName\nOuvrez l’application Fichiers → Téléchargements.';
+    }
+  } catch (_) {}
 
   final docs = await getApplicationDocumentsDirectory();
   final fallback = File(p.join(docs.path, 'arsave_restored', safeName));
   await fallback.parent.create(recursive: true);
   await fallback.writeAsBytes(bytes, flush: true);
-  return 'Fichier enregistré : $safeName';
+  return 'Fichier enregistré dans l’application : $safeName';
 }
 
 MimeType _mimeFrom(String mime, String ext) {
@@ -64,18 +84,17 @@ MimeType _mimeFrom(String mime, String ext) {
   return MimeType.other;
 }
 
-Future<Directory?> _downloadDirectory() async {
+Future<Directory?> _publicDownloadDir() async {
   try {
     final dir = await getDownloadsDirectory();
-    if (dir != null) return dir;
+    if (dir != null && await dir.exists()) return dir;
   } catch (_) {}
 
-  final candidates = <String>[
+  for (final path in const [
     '/storage/emulated/0/Download',
     '/storage/emulated/0/Downloads',
     '/sdcard/Download',
-  ];
-  for (final path in candidates) {
+  ]) {
     final d = Directory(path);
     try {
       if (await d.exists()) return d;
