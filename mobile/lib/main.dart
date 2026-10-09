@@ -15,8 +15,8 @@ import 'features/home/home_shell.dart';
 String apiBaseUrl() {
   const fromEnv = String.fromEnvironment('API_BASE_URL');
   if (fromEnv.isNotEmpty) return fromEnv;
-  // Android emulator loopback to host machine
-  return 'http://10.0.2.2:8080';
+  // Serveur hébergé (Railway) — utilisé par l'APK et le web en production
+  return 'https://api-production-ccea.up.railway.app';
 }
 
 Future<void> main() async {
