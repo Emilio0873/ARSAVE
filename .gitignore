@@ -27,3 +27,7 @@ docs/_count_pages.py
 
 # Large APK optional — commit intentionally when publishing
 # backend/public/download/arsave.apk
+
+mobile/.gradle-home/
+mobile/.tmp-cmdline-tools.zip
+
